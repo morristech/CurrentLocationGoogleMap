@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -67,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
                     double longitude = locationTrack.getLongitude();
                     double latitude = locationTrack.getLatitude();
                     //Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
-                    String location =  getCompleteAddressString(latitude , longitude);
+                    //String location =  getCompleteAddressString(latitude , longitude);
+                    String location = getAddress(latitude , longitude);
                     textView.setText(location);
 
                 } else {
@@ -100,6 +102,25 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return strAdd;
+    }
+
+
+    private String getAddress(double latituade , double longituade){
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+        List<Address> addresses  = null;
+        try {
+            addresses = geocoder.getFromLocation(latituade,longituade, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String city = addresses.get(0).getLocality();
+        String state = addresses.get(0).getAdminArea();
+        String zip = addresses.get(0).getPostalCode();
+        String country = addresses.get(0).getCountryName();
+        String address = addresses.get(0).getAddressLine(0);
+        return ""+address+""+state;
     }
 
     private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
